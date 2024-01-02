@@ -1,8 +1,10 @@
-FROM ubuntu:latest
+FROM debian:latest
 
 ARG USERNAME=scotthal
 ARG USER_UID=1100
 ARG USER_GID=$USER_UID
+
+ARG LUA=lua-5.4.6
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -24,6 +26,13 @@ RUN apt-get update; \
   rm -rf /var/lib/apt/lists/*
 
 ENV DEBIAN_FRONTEND=
+
+RUN cd /tmp; \
+  curl -L https://lua.org/ftp/$LUA.tar.gz | gzip -dc | tar xf -; \
+  cd /tmp/$LUA; \
+  make all test install; \
+  cd /tmp; \
+  rm -rf $LUA;
 
 WORKDIR /home/${USERNAME}
 USER ${USERNAME}
